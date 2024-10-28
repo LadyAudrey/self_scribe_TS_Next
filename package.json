@@ -6,7 +6,10 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "psql": "psql -U postgres -h localhost"
   },
   "dependencies": {
     "@auth/drizzle-adapter": "^1.7.2",
