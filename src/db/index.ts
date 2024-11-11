@@ -1,4 +1,3 @@
-console.log(process.env.POSTGRES_URL, "process.envPOSTGRES_URL");
 import { sql } from "@vercel/postgres";
 import postgres from "postgres";
 import {
@@ -9,8 +8,10 @@ import {
   drizzle as LocalDrizzle,
   PostgresJsDatabase,
 } from "drizzle-orm/postgres-js";
-import assert from "assert";
-assert(!!process.env.POSTGRES_URL, "environment variable POSTGRES_URL not set");
+
+if (!process.env.POSTGRES_URL) {
+  throw new Error("environment variable POSTGRES_URL not set");
+}
 let db: VercelPgDatabase | PostgresJsDatabase;
 
 if (process.env.NODE_ENV === "production") {
