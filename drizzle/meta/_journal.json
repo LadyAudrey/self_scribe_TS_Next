@@ -8,6 +8,13 @@
       "when": 1730129297754,
       "tag": "0000_graceful_doomsday",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1731688218094,
+      "tag": "0001_absent_abomination",
+      "breakpoints": true
     }
   ]
 }
