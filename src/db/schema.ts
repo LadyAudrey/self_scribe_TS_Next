@@ -1,4 +1,12 @@
-import { boolean, integer, pgTable, primaryKey, text, timestamp } from "drizzle-orm/pg-core";
+import {
+  bigserial,
+  boolean,
+  integer,
+  pgTable,
+  primaryKey,
+  text,
+  timestamp,
+} from "drizzle-orm/pg-core";
 import { AdapterAccountType } from "next-auth/adapters";
 
 export const users = pgTable("user", {
@@ -9,7 +17,7 @@ export const users = pgTable("user", {
   email: text("email").unique(),
   emailVerified: timestamp("emailVerified", { mode: "date" }),
   image: text("image"),
-})
+});
 
 export const accounts = pgTable(
   "account",
@@ -33,7 +41,7 @@ export const accounts = pgTable(
       columns: [account.provider, account.providerAccountId],
     }),
   })
-)
+);
 
 export const sessions = pgTable("session", {
   sessionToken: text("sessionToken").primaryKey(),
@@ -41,7 +49,7 @@ export const sessions = pgTable("session", {
     .notNull()
     .references(() => users.id, { onDelete: "cascade" }),
   expires: timestamp("expires", { mode: "date" }).notNull(),
-})
+});
 
 export const verificationTokens = pgTable(
   "verificationToken",
@@ -55,7 +63,7 @@ export const verificationTokens = pgTable(
       columns: [verificationToken.identifier, verificationToken.token],
     }),
   })
-)
+);
 
 export const authenticators = pgTable(
   "authenticator",
@@ -76,4 +84,17 @@ export const authenticators = pgTable(
       columns: [authenticator.userId, authenticator.credentialID],
     }),
   })
-)
+);
+
+// above here, everything is NextAuth, everything below is in-app data
+
+export const lists = pgTable("lists", {
+  listId: bigserial({ mode: "number" }).primaryKey(),
+  name: text().notNull(),
+  userId: text("userId")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  description: text(),
+  createdOn: timestamp({ mode: "date" }).defaultNow(),
+  lastUpdated: timestamp({ mode: "date" }).defaultNow(),
+});
