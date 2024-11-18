@@ -5,7 +5,9 @@ import Resend from "next-auth/providers/resend";
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   adapter: DrizzleAdapter(db),
-  providers: [Resend({
-    from: "noreply@email.selfscribe.xyz"
-  })],
+  providers: [
+    Resend({
+      from: "noreply@email.selfscribe.xyz",
+    }),
+  ],
 });
