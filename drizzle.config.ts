@@ -4,8 +4,6 @@ import { defineConfig } from "drizzle-kit";
 
 const url = process.env.POSTGRES_URL;
 
-console.log(url);
-
 assert(url, "environment variable POSTGRES_URL not set");
 
 export default defineConfig({
