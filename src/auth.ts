@@ -10,4 +10,10 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       from: "noreply@email.selfscribe.xyz",
     }),
   ],
+  callbacks: {
+    authorized: async ({ auth }) => {
+      console.log("inside auth fx");
+      return !!auth;
+    },
+  },
 });
