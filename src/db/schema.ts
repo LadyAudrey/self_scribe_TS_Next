@@ -40,7 +40,7 @@ export const accounts = pgTable(
     compoundKey: primaryKey({
       columns: [account.provider, account.providerAccountId],
     }),
-  }),
+  })
 );
 
 export const sessions = pgTable("session", {
@@ -62,7 +62,7 @@ export const verificationTokens = pgTable(
     compositePk: primaryKey({
       columns: [verificationToken.identifier, verificationToken.token],
     }),
-  }),
+  })
 );
 
 export const authenticators = pgTable(
@@ -83,13 +83,15 @@ export const authenticators = pgTable(
     compositePK: primaryKey({
       columns: [authenticator.userId, authenticator.credentialID],
     }),
-  }),
+  })
 );
 
 // above here, everything is NextAuth, everything below is in-app data
 
 export const lists = pgTable("lists", {
-  listId: bigserial({ mode: "number" }).primaryKey(),
+  listId: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
   name: text().notNull(),
   userId: text("userId")
     .notNull()

@@ -15,6 +15,13 @@
       "when": 1731688218094,
       "tag": "0001_absent_abomination",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1732899731264,
+      "tag": "0002_perpetual_bloodscream",
+      "breakpoints": true
     }
   ]
 }

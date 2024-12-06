@@ -12,6 +12,10 @@ const config: Config = {
         background: "var(--background)",
         foreground: "var(--foreground)",
       },
+      backgroundImage: {
+        "exit-btn": "url('/buttons/delete.svg')",
+        "edit-btn": "url('/buttons/edit.svg')",
+      },
     },
   },
   plugins: [],

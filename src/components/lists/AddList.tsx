@@ -1,6 +1,7 @@
 import { auth } from "@/auth";
 import { db } from "@/db";
 import { lists } from "@/db/schema";
+import { revalidatePath } from "next/cache";
 
 export default async function AddList() {
   const session = await auth();
@@ -14,11 +15,16 @@ export default async function AddList() {
     if (!name) {
       return;
     }
-    db.insert(lists).values({ name, userId });
+    try {
+      await db.insert(lists).values({ name, userId });
+      revalidatePath("/dashboard/lists");
+    } catch (error) {
+      console.error(error);
+    }
   }
   return (
-    <form action={addList}>
-      <input type="text" name="name" />
+    <form action={addList} className="flex gap-2">
+      <input type="text" name="name" className="text-black" />
       <button type="submit">Add List</button>
     </form>
   );
