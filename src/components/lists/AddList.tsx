@@ -1,9 +1,9 @@
 import { auth } from "@/auth";
 import { db } from "@/db";
-import { lists } from "@/db/schema";
+import { listsTable } from "@/db/schema";
 import { revalidatePath } from "next/cache";
 
-export default async function AddList() {
+export async function AddList() {
   const session = await auth();
   if (!session || !session.user) {
     return null;
@@ -16,7 +16,7 @@ export default async function AddList() {
       return;
     }
     try {
-      await db.insert(lists).values({ name, userId });
+      await db.insert(listsTable).values({ name, userId });
       revalidatePath("/dashboard/lists");
     } catch (error) {
       console.error(error);

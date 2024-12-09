@@ -1,5 +1,4 @@
 import { auth } from "@/auth";
-import Link from "next/link";
 
 import Navbar from "../../components/UI/Navbar";
 export default async function DashboardLayout({

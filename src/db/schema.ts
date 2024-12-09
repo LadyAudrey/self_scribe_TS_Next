@@ -1,5 +1,4 @@
 import {
-  bigserial,
   boolean,
   integer,
   pgTable,
@@ -9,7 +8,7 @@ import {
 } from "drizzle-orm/pg-core";
 import { AdapterAccountType } from "next-auth/adapters";
 
-export const users = pgTable("user", {
+export const usersTable = pgTable("user", {
   id: text("id")
     .primaryKey()
     .$defaultFn(() => crypto.randomUUID()),
@@ -19,12 +18,12 @@ export const users = pgTable("user", {
   image: text("image"),
 });
 
-export const accounts = pgTable(
+export const accountsTable = pgTable(
   "account",
   {
     userId: text("userId")
       .notNull()
-      .references(() => users.id, { onDelete: "cascade" }),
+      .references(() => usersTable.id, { onDelete: "cascade" }),
     type: text("type").$type<AdapterAccountType>().notNull(),
     provider: text("provider").notNull(),
     providerAccountId: text("providerAccountId").notNull(),
@@ -43,15 +42,15 @@ export const accounts = pgTable(
   })
 );
 
-export const sessions = pgTable("session", {
+export const sessionsTable = pgTable("session", {
   sessionToken: text("sessionToken").primaryKey(),
   userId: text("userId")
     .notNull()
-    .references(() => users.id, { onDelete: "cascade" }),
+    .references(() => usersTable.id, { onDelete: "cascade" }),
   expires: timestamp("expires", { mode: "date" }).notNull(),
 });
 
-export const verificationTokens = pgTable(
+export const verificationTokensTable = pgTable(
   "verificationToken",
   {
     identifier: text("identifier").notNull(),
@@ -65,13 +64,13 @@ export const verificationTokens = pgTable(
   })
 );
 
-export const authenticators = pgTable(
+export const authenticatorsTable = pgTable(
   "authenticator",
   {
     credentialID: text("credentialID").notNull().unique(),
     userId: text("userId")
       .notNull()
-      .references(() => users.id, { onDelete: "cascade" }),
+      .references(() => usersTable.id, { onDelete: "cascade" }),
     providerAccountId: text("providerAccountId").notNull(),
     credentialPublicKey: text("credentialPublicKey").notNull(),
     counter: integer("counter").notNull(),
@@ -88,14 +87,30 @@ export const authenticators = pgTable(
 
 // above here, everything is NextAuth, everything below is in-app data
 
-export const lists = pgTable("lists", {
+export const listsTable = pgTable("lists", {
   listId: text("id")
     .primaryKey()
     .$defaultFn(() => crypto.randomUUID()),
   name: text().notNull(),
   userId: text("userId")
     .notNull()
-    .references(() => users.id, { onDelete: "cascade" }),
+    .references(() => usersTable.id, { onDelete: "cascade" }),
+  description: text(),
+  createdOn: timestamp({ mode: "date" }).defaultNow(),
+  lastUpdated: timestamp({ mode: "date" }).defaultNow(),
+});
+
+export const tasksTable = pgTable("tasks", {
+  taskId: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  name: text().notNull(),
+  userId: text("userId")
+    .notNull()
+    .references(() => usersTable.id, { onDelete: "cascade" }),
+  listId: text("listId")
+    .notNull()
+    .references(() => listsTable.listId, { onDelete: "cascade" }),
   description: text(),
   createdOn: timestamp({ mode: "date" }).defaultNow(),
   lastUpdated: timestamp({ mode: "date" }).defaultNow(),
