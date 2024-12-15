@@ -1,9 +1,10 @@
 import { revalidatePath } from "next/cache";
-import EditList from "./EditList";
-import DeleteBtn from "./DeleteBtn";
+import { DeleteBtn } from "./DeleteBtn";
 import { listsTable } from "@/db/schema";
 import { db } from "@/db";
 import { eq } from "drizzle-orm";
+import EditList from "./EditList";
+import { Tasks } from "../tasks/Tasks";
 import { AddTask } from "../tasks/AddTask";
 
 type ToDoLists = {
@@ -40,13 +41,15 @@ export async function Lists({ toDoLists }: ListsProps) {
           <li key={list.listId} className="flex flex-col gap-2">
             <div className="flex justify-between gap-2">
               <EditList name={list.name} updateList={updateList} />
-              <DeleteBtn deleteFn={deleteList} />
+              <DeleteBtn
+                deleteFn={deleteList}
+                confirmationTxt="Are you sure you want to delete this list? All of your tasks will be permanently removed. This action cannot be undone."
+                modalTitle="Delete List"
+              />
             </div>
             <div className="flex flex-col gap-2 ps-4">
-              <ul>
-                <li>Dummy task</li>
-              </ul>
-              <AddTask />
+              <Tasks listId={list.listId} />
+              <AddTask listId={list.listId} />
             </div>
           </li>
         );

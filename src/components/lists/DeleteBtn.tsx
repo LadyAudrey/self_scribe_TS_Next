@@ -4,9 +4,15 @@ import { Dialog, DialogPanel, DialogTitle } from "@headlessui/react";
 
 type DeleteBtnProps = {
   deleteFn: () => void;
+  confirmationTxt: string;
+  modalTitle: string;
 };
 
-export default function DeleteBtn({ deleteFn }: DeleteBtnProps) {
+export function DeleteBtn({
+  deleteFn,
+  confirmationTxt,
+  modalTitle,
+}: DeleteBtnProps) {
   const [modalOpen, setModalOpen] = useState(false);
   return (
     <>
@@ -20,6 +26,8 @@ export default function DeleteBtn({ deleteFn }: DeleteBtnProps) {
         onConfirm={deleteFn}
         open={modalOpen}
         setOpen={setModalOpen}
+        confirmationTxt={confirmationTxt}
+        modalTitle={modalTitle}
       />
     </>
   );
@@ -29,11 +37,15 @@ type ConfirmationModalProps = {
   onConfirm: () => void;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   open: boolean;
+  confirmationTxt: string;
+  modalTitle: string;
 };
 function ConfirmationModal({
   setOpen,
   open,
   onConfirm,
+  confirmationTxt,
+  modalTitle,
 }: ConfirmationModalProps) {
   return (
     <Dialog open={open} onClose={setOpen} className="relative z-10">
@@ -50,14 +62,10 @@ function ConfirmationModal({
                     as="h3"
                     className="text-base font-semibold text-gray-900"
                   >
-                    Delete List
+                    {modalTitle}
                   </DialogTitle>
                   <div className="mt-2">
-                    <p className="text-sm text-gray-500">
-                      Are you sure you want to delete this list? All of your
-                      tasks will be permanently removed. This action cannot be
-                      undone.
-                    </p>
+                    <p className="text-sm text-gray-500">{confirmationTxt}</p>
                   </div>
                 </div>
               </div>
