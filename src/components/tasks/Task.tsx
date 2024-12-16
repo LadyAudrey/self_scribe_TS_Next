@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { EditTask } from "./EditTask";
 import { DeleteBtn } from "../lists/DeleteBtn";
 import EditList from "../lists/EditList";
+import { Checkbox } from "@headlessui/react";
 
 type TaskProps = {
   task: {
@@ -32,7 +33,7 @@ export function Task({ task }: TaskProps) {
     await db.delete(tasksTable).where(eq(tasksTable.taskId, task.taskId));
     revalidatePath("/dashboard/lists");
   }
-  // To do: add delete, checkbox and edit
+  // To do:  checkbox and edit
   return (
     <li className="flex justify-between">
       <EditTask name={task.name} updateTask={updateTask} />
@@ -41,6 +42,7 @@ export function Task({ task }: TaskProps) {
         confirmationTxt="Are you sure you want to delete this task?"
         modalTitle="Delete Task"
       />
+      <Checkbox />
     </li>
   );
 }

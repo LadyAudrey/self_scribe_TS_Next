@@ -2,6 +2,7 @@ import { auth } from "@/auth";
 import { db } from "@/db";
 import { listsTable } from "@/db/schema";
 import { revalidatePath } from "next/cache";
+import { AddListForm } from "./AddListForm";
 
 export async function AddList() {
   const session = await auth();
@@ -9,23 +10,20 @@ export async function AddList() {
     return null;
   }
   const userId = session.user.id!;
-  async function addList(formData: FormData) {
+  async function addList(_prevState: { message: string }, formData: FormData) {
     "use server";
     const name = formData.get("name") as string | null;
     if (!name) {
-      return;
+      return { message: "Failed to create list" };
     }
     try {
       await db.insert(listsTable).values({ name, userId });
       revalidatePath("/dashboard/lists");
+      return { message: "" };
     } catch (error) {
       console.error(error);
+      return { message: "Failed to create list" };
     }
   }
-  return (
-    <form action={addList} className="flex gap-2">
-      <input type="text" name="name" className="text-black" />
-      <button type="submit">Add List</button>
-    </form>
-  );
+  return <AddListForm addList={addList} />;
 }

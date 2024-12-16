@@ -2,6 +2,7 @@ import { auth } from "@/auth";
 import { db } from "@/db";
 import { tasksTable } from "@/db/schema";
 import { revalidatePath } from "next/cache";
+import { AddTaskForm } from "./AddTaskForm";
 
 type AddTaskProps = {
   listId: string;
@@ -13,23 +14,20 @@ export async function AddTask({ listId }: AddTaskProps) {
     return null;
   }
   const userId = session.user.id!;
-  async function addTask(formData: FormData) {
+  async function addTask(_prevState: { message: string }, formData: FormData) {
     "use server";
     const name = formData.get("name") as string | null;
     if (!name) {
-      return;
+      return { message: "Failed to create task" };
     }
     try {
       await db.insert(tasksTable).values({ name, userId, listId });
       revalidatePath("/dashboard/lists");
+      return { message: "" };
     } catch (error) {
       console.error(error);
+      return { message: "Failed to create task" };
     }
   }
-  return (
-    <form action={addTask} className="flex gap-2">
-      <input type="text" name="name" className="text-black" />
-      <button type="submit">Add Task</button>
-    </form>
-  );
+  return <AddTaskForm addTask={addTask} />;
 }
