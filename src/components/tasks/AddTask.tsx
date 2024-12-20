@@ -1,6 +1,6 @@
 import { auth } from "@/auth";
 import { db } from "@/db";
-import { tasksTable } from "@/db/schema";
+import { tasksTable, taskInstancesTable } from "@/db/schema";
 import { revalidatePath } from "next/cache";
 import { AddTaskForm } from "./AddTaskForm";
 
@@ -21,7 +21,13 @@ export async function AddTask({ listId }: AddTaskProps) {
       return { message: "Failed to create task" };
     }
     try {
-      await db.insert(tasksTable).values({ name, userId, listId });
+      const result = await db
+        .insert(tasksTable)
+        .values({ name, userId, listId })
+        .returning({ taskId: tasksTable.taskId });
+      const { taskId } = result[0];
+      await db.insert(taskInstancesTable).values({ taskId, listId, userId });
+
       revalidatePath("/dashboard/lists");
       return { message: "" };
     } catch (error) {

@@ -29,6 +29,13 @@
       "when": 1733761395644,
       "tag": "0003_third_cloak",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1734713245807,
+      "tag": "0004_true_kitty_pryde",
+      "breakpoints": true
     }
   ]
 }

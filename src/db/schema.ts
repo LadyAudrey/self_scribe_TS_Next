@@ -114,4 +114,24 @@ export const tasksTable = pgTable("tasks", {
   description: text(),
   createdOn: timestamp({ mode: "date" }).defaultNow(),
   lastUpdated: timestamp({ mode: "date" }).defaultNow(),
+  repeats: boolean().default(false),
+  frequency: text().default("1:0"),
+});
+
+export const taskInstancesTable = pgTable("taskInstances", {
+  instanceId: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  userId: text("userId")
+    .notNull()
+    .references(() => usersTable.id, { onDelete: "cascade" }),
+  listId: text("listId")
+    .notNull()
+    .references(() => listsTable.listId, { onDelete: "cascade" }),
+  taskId: text("taskId")
+    .notNull()
+    .references(() => tasksTable.taskId, { onDelete: "cascade" }),
+  createdOn: timestamp({ mode: "date" }).defaultNow(),
+  lastUpdated: timestamp({ mode: "date" }).defaultNow(),
+  completed: boolean().default(false),
 });

@@ -17,6 +17,7 @@ export default async function page() {
     .select()
     .from(listsTable)
     .where(eq(listsTable.userId, userId));
+  //TODO: update to import taskInstances as well
   return (
     <div className="flex flex-col md:flex-row justify-around min-h-full gap-4">
       <Side>
