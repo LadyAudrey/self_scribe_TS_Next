@@ -5,28 +5,32 @@ import { and, eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 
 import { Task } from "./Task";
+import { Task as DBTask } from "@/app/dashboard/lists/page";
+import { CompletedTask } from "./CompletedTask";
 
 type TasksProps = {
-  listId: string;
+  tasks: DBTask[];
+  completed: boolean;
 };
 
-export async function Tasks({ listId }: TasksProps) {
-  const session = await auth();
-  if (!session || !session.user) {
-    return null;
-  }
-  const userId = session.user.id!;
-
-  const tasks = await db
-    .select()
-    .from(tasksTable)
-    .where(and(eq(tasksTable.userId, userId), eq(tasksTable.listId, listId)));
-
+export async function Tasks({ tasks, completed }: TasksProps) {
+  const filteredTasks = tasks.filter((task) => {
+    const instance = task.instances[0];
+    if (!instance) {
+      return false;
+    }
+    return instance.completed === completed;
+  });
   return (
     <ul>
-      {tasks.map((task) => {
-        return <Task task={task} />;
-      })}
+      {!completed &&
+        filteredTasks.map((task) => {
+          return <Task task={task} key={task.taskId} />;
+        })}
+      {completed &&
+        filteredTasks.map((task) => {
+          return <CompletedTask task={task} key={task.taskId} />;
+        })}
     </ul>
   );
 }

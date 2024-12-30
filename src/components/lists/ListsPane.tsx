@@ -6,21 +6,13 @@ import { eq } from "drizzle-orm";
 import EditList from "./EditList";
 import { Tasks } from "../tasks/Tasks";
 import { AddTask } from "../tasks/AddTask";
-
-type ToDoLists = {
-  name: string;
-  userId: string;
-  listId: string;
-  description: string | null;
-  createdOn: Date | null;
-  lastUpdated: Date | null;
-}[];
+import { Lists } from "@/app/dashboard/lists/page";
 
 type ListsProps = {
-  toDoLists: ToDoLists;
+  toDoLists: Lists;
 };
 
-export async function Lists({ toDoLists }: ListsProps) {
+export async function ListsPane({ toDoLists }: ListsProps) {
   return (
     <ul>
       {toDoLists.map((list) => {
@@ -48,7 +40,7 @@ export async function Lists({ toDoLists }: ListsProps) {
               />
             </div>
             <div className="flex flex-col gap-2 ps-4">
-              <Tasks listId={list.listId} />
+              <Tasks tasks={list.tasks} completed={false} />
               <AddTask listId={list.listId} />
             </div>
           </li>

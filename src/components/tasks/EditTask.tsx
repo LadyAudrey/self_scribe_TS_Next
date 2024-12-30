@@ -29,7 +29,12 @@ export function EditTask({ name, updateTask }: EditTaskProps) {
     setEditing(false);
   }
   return (
-    <div onDoubleClick={onDblClick} onBlur={onBlur} onKeyDown={onEnterKey}>
+    <div
+      onDoubleClick={onDblClick}
+      onBlur={onBlur}
+      onKeyDown={onEnterKey}
+      className="grow"
+    >
       {editing && (
         <input
           className="text-black"

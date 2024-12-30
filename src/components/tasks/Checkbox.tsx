@@ -1,5 +1,5 @@
 import { Checkbox as HeadlessCheckbox } from "@headlessui/react";
-import checkmark from "public/buttons/check.svg";
+import Checkmark from "../../../public/buttons/check.svg";
 import Image from "next/image";
 
 type CheckboxProps = {
@@ -9,8 +9,19 @@ type CheckboxProps = {
 
 export function Checkbox({ checked, onChange }: CheckboxProps) {
   return (
-    <HeadlessCheckbox checked={checked} onChange={onChange}>
-      <Image src={checkmark} height={16} width={16} alt={"checkmark"} />
+    // TODO: restrict spamming issues
+    <HeadlessCheckbox
+      checked={checked}
+      onChange={onChange}
+      className="border size-4 group text-white block rounded bg-white data-[checked]:bg-blue-500"
+    >
+      <Image
+        src={Checkmark}
+        height={20}
+        width={20}
+        alt="checkmark"
+        className="opacity-0 group-data-[checked]:opacity-100 m-auto"
+      />
     </HeadlessCheckbox>
   );
 }
