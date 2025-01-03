@@ -12,6 +12,7 @@ import {
 } from "../UI/Accordion";
 import { Checkbox } from "./Checkbox";
 import { Task as DBTask } from "@/app/dashboard/lists/page";
+import { RepeatBtn } from "../lists/RepeatBtn";
 
 type TaskProps = {
   task: DBTask;
@@ -44,6 +45,14 @@ export function Task({ task }: TaskProps) {
       .where(eq(taskInstancesTable.instanceId, instanceId));
     revalidatePath("/dashboard/lists");
   }
+  async function updateTaskRepeats(repeats: boolean) {
+    "use server";
+    await db
+      .update(tasksTable)
+      .set({ repeats: repeats })
+      .where(eq(tasksTable.taskId, task.taskId));
+    revalidatePath("/dashboard/lists");
+  }
   return (
     <li className="my-2">
       <Accordion type={"single"} collapsible>
@@ -58,7 +67,11 @@ export function Task({ task }: TaskProps) {
             />
           </AccordionTrigger>
           <AccordionContent>
-            <h1>hi</h1>
+            <RepeatBtn
+              repeats={!!task.repeats}
+              updateRepeats={updateTaskRepeats}
+            />
+            {/* TODO: create UI & Fx for frequency input */}
           </AccordionContent>
         </AccordionItem>
       </Accordion>

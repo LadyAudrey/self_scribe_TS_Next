@@ -2,7 +2,6 @@ import { taskInstancesTable, tasksTable } from "@/db/schema";
 import { db } from "@/db";
 import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
-import { EditTask } from "./EditTask";
 import { DeleteBtn } from "../lists/DeleteBtn";
 import { Checkbox } from "./Checkbox";
 import { Task as DBTask } from "@/app/dashboard/lists/page";

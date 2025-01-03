@@ -73,13 +73,15 @@ async function compileLists(userId: string) {
   const toDoLists = await db
     .select()
     .from(listsTable)
-    .where(eq(listsTable.userId, userId));
+    .where(eq(listsTable.userId, userId))
+    .orderBy(listsTable.createdOn);
   const newLists = await Promise.all(
     toDoLists.map(async (list) => {
       const tasks = await db
         .select()
         .from(tasksTable)
-        .where(eq(tasksTable.listId, list.listId));
+        .where(eq(tasksTable.listId, list.listId))
+        .orderBy(tasksTable.createdOn);
       const newTasks = await Promise.all(
         tasks.map(async (task) => {
           const taskInstances = await db
