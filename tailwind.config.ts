@@ -15,6 +15,7 @@ const config: Config = {
       backgroundImage: {
         "exit-btn": "url('/buttons/delete.svg')",
         "edit-btn": "url('/buttons/edit.svg')",
+        "completed-btn": "url('/buttons/greenCheck.svg')",
       },
       keyframes: {
         "accordion-down": {

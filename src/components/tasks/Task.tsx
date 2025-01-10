@@ -13,6 +13,7 @@ import {
 import { Checkbox } from "./Checkbox";
 import { Task as DBTask } from "@/app/dashboard/lists/page";
 import { RepeatBtn } from "../lists/RepeatBtn";
+import { TaskFrequency } from "./TaskFrequency";
 
 type TaskProps = {
   task: DBTask;
@@ -23,6 +24,18 @@ export function Task({ task }: TaskProps) {
     return null;
   }
   const completed = task.instances[0].completed ?? false;
+  const frequency = task.frequency as string;
+
+  const [activeString, inactiveString] = frequency.split(":");
+  let active = parseInt(activeString);
+  if (isNaN(active)) {
+    active = 1;
+  }
+  let inactive = parseInt(inactiveString);
+  if (isNaN(inactive)) {
+    inactive = 0;
+  }
+
   async function updateTask(title: string) {
     "use server";
     await db
@@ -53,6 +66,15 @@ export function Task({ task }: TaskProps) {
       .where(eq(tasksTable.taskId, task.taskId));
     revalidatePath("/dashboard/lists");
   }
+  async function updateFrequency(active: number, inactive: number) {
+    "use server";
+    const frequency = active + ":" + inactive;
+    await db
+      .update(tasksTable)
+      .set({ frequency: frequency })
+      .where(eq(tasksTable.taskId, task.taskId));
+    revalidatePath("/dashboard/lists");
+  }
   return (
     <li className="my-2">
       <Accordion type={"single"} collapsible>
@@ -66,12 +88,16 @@ export function Task({ task }: TaskProps) {
               modalTitle="Delete Task"
             />
           </AccordionTrigger>
-          <AccordionContent>
+          <AccordionContent className="flex justify-between text-black">
             <RepeatBtn
               repeats={!!task.repeats}
               updateRepeats={updateTaskRepeats}
             />
-            {/* TODO: create UI & Fx for frequency input */}
+            <TaskFrequency
+              active={active}
+              inactive={inactive}
+              updateFrequency={updateFrequency}
+            />
           </AccordionContent>
         </AccordionItem>
       </Accordion>
