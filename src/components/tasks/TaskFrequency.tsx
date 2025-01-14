@@ -47,7 +47,7 @@ export function TaskFrequency({
         name="active"
         className="w-8"
         min={0}
-        max={99}
+        max={30}
         value={activeDays}
         onChange={(event) => {
           if (isNaN(parseInt(event.target.value))) {
@@ -71,6 +71,7 @@ export function TaskFrequency({
             return;
           }
           setHasChanged(true);
+          3;
           setInactiveDays(parseInt(event.target.value));
         }}
       />

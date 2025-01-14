@@ -43,6 +43,13 @@
       "when": 1736527857362,
       "tag": "0005_skinny_christian_walker",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1736817145832,
+      "tag": "0006_high_reavers",
+      "breakpoints": true
     }
   ]
 }

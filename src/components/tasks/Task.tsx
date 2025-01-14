@@ -68,6 +68,9 @@ export function Task({ task }: TaskProps) {
   }
   async function updateFrequency(active: number, inactive: number) {
     "use server";
+    if (active > 30) {
+      return;
+    }
     const frequency = active + ":" + inactive;
     await db
       .update(tasksTable)

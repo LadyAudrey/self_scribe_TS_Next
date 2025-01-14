@@ -42,6 +42,9 @@ export type TaskInstance = {
   instanceId: string;
   completed: boolean | null;
 };
+
+const DAY_IN_MILLISECONDS = 24 * 60 * 60 * 1000;
+
 export default async function page() {
   const session = await auth();
   if (!session || !session.user) {
@@ -84,12 +87,7 @@ async function compileLists(userId: string) {
         .orderBy(tasksTable.createdOn);
       const newTasks = await Promise.all(
         tasks.map(async (task) => {
-          const taskInstances = await db
-            .select()
-            .from(taskInstancesTable)
-            .where(eq(taskInstancesTable.taskId, task.taskId))
-            .orderBy(desc(taskInstancesTable.createdOn));
-          return {
+          const newTask: Task = {
             name: task.name,
             userId: task.userId,
             listId: task.listId,
@@ -99,8 +97,31 @@ async function compileLists(userId: string) {
             taskId: task.taskId,
             repeats: task.repeats,
             frequency: task.frequency,
-            instances: taskInstances,
+            instances: [],
           };
+          const taskInstances = await db
+            .select()
+            .from(taskInstancesTable)
+            .where(eq(taskInstancesTable.taskId, task.taskId))
+            .orderBy(desc(taskInstancesTable.createdOn))
+            .limit(31);
+          newTask.instances = taskInstances;
+          const lastPopulated = task.lastPopulated!;
+          const dayNumber = Math.floor(
+            lastPopulated.getTime() / DAY_IN_MILLISECONDS
+          );
+          const todayNumber = Math.floor(Date.now() / DAY_IN_MILLISECONDS);
+          if (dayNumber === todayNumber) {
+            return newTask;
+          }
+          const [activeString, inactiveString] = task.frequency.split(":");
+          const active = parseInt(activeString);
+          const inactive = parseInt(inactiveString);
+          if (isNaN(active) || isNaN(inactive)) {
+            return newTask;
+          }
+
+          return newTask;
         })
       );
       return {
@@ -115,4 +136,27 @@ async function compileLists(userId: string) {
     })
   );
   return newLists;
+}
+
+function generateFrequencyGraph(
+  taskInstances: TaskInstance[],
+  active: number,
+  inactive: number
+) {
+  let min = Number.MAX_SAFE_INTEGER;
+  let max = 0;
+  const previousFrequencies = taskInstances.map((instance) => {
+    const dayNumber = Math.floor(
+      instance.createdOn!.getTime() / DAY_IN_MILLISECONDS
+    );
+    min = Math.min(min, dayNumber);
+    max = Math.max(max, dayNumber);
+    return {
+      dayNumber,
+      active: true,
+    };
+  });
+  // create variable to store the day of the last completed frequency
+  // use variable to create an [{}] that tell us what to populate in the DB
+  return [];
 }

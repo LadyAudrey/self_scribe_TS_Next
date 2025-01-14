@@ -114,6 +114,7 @@ export const tasksTable = pgTable("tasks", {
   description: text(),
   createdOn: timestamp({ mode: "date" }).defaultNow(),
   lastUpdated: timestamp({ mode: "date" }).defaultNow(),
+  lastPopulated: timestamp({ mode: "date" }).defaultNow(),
   repeats: boolean().default(false),
   frequency: text().default("1:0").notNull(),
 });
