@@ -50,6 +50,13 @@
       "when": 1736817145832,
       "tag": "0006_high_reavers",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1737134055993,
+      "tag": "0007_same_whistler",
+      "breakpoints": true
     }
   ]
 }

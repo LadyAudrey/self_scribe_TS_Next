@@ -120,6 +120,39 @@ async function compileLists(userId: string) {
           if (isNaN(active) || isNaN(inactive)) {
             return newTask;
           }
+          const neededEntries = getNeededEntries(
+            taskInstances,
+            active,
+            inactive,
+            todayNumber
+          );
+          const entries = neededEntries.map((entry) => {
+            const timeStamp = entry * DAY_IN_MILLISECONDS;
+            return {
+              userId: task.userId,
+              taskId: task.taskId,
+              listId: task.listId,
+              createdOn: timeStamp,
+              lastUpdated: timeStamp,
+            };
+          });
+          // TODO: figure out drizzle/ typescript issue
+          const newTaskInstances = await db
+            .insert(taskInstancesTable)
+            .values(entries as any)
+            .returning();
+          // const newTasksInstances = Promise.all(
+          //   neededEntries.map(async (entry) => {
+          //     const timeStamp = entry * DAY_IN_MILLISECONDS;
+          //     return await db.insert(taskInstancesTable).values({
+          //       userId: task.userId,
+          //       taskId: task.taskId,
+          //       listId: task.listId,
+          //       createdOn: timeStamp,
+          //       lastUpdated: timeStamp,
+          //     });
+          //   })
+          // );
 
           return newTask;
         })
@@ -138,25 +171,63 @@ async function compileLists(userId: string) {
   return newLists;
 }
 
-function generateFrequencyGraph(
+function getNeededEntries(
   taskInstances: TaskInstance[],
   active: number,
-  inactive: number
+  inactive: number,
+  today: number
 ) {
   let min = Number.MAX_SAFE_INTEGER;
   let max = 0;
-  const previousFrequencies = taskInstances.map((instance) => {
+  const previousFrequencies = new Set();
+  taskInstances.forEach((instance) => {
     const dayNumber = Math.floor(
       instance.createdOn!.getTime() / DAY_IN_MILLISECONDS
     );
     min = Math.min(min, dayNumber);
     max = Math.max(max, dayNumber);
-    return {
-      dayNumber,
-      active: true,
-    };
+    previousFrequencies.add(dayNumber);
   });
   // create variable to store the day of the last completed frequency
+  let lastCompletedFrequency = 0;
+  let left = min;
+  let right = min + active + inactive;
+  while (right <= max) {
+    let valid = true;
+    for (let i = left; i < inactive + left; i++) {
+      if (previousFrequencies.has(i)) {
+        valid = false;
+      }
+    }
+    for (let i = inactive + left; i <= right; i++) {
+      if (!previousFrequencies.has(i)) {
+        valid = false;
+      }
+    }
+    if (valid) {
+      lastCompletedFrequency = right;
+    }
+    left++;
+    right++;
+  }
   // use variable to create an [{}] that tell us what to populate in the DB
-  return [];
+  const newEntries = [];
+  let inactiveDays = 0;
+  let activeDays = 0;
+  for (let i = right + 1; i <= today; i++) {
+    inactiveDays++;
+    if (inactiveDays !== inactive) {
+      continue;
+    }
+    activeDays++;
+    if (!previousFrequencies.has(i)) {
+      newEntries.push(i);
+    }
+    if (activeDays >= active) {
+      inactiveDays = 0;
+      activeDays = 0;
+    }
+  }
+
+  return newEntries;
 }
