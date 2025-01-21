@@ -27,6 +27,7 @@ export type Task = {
   description: string | null;
   createdOn: Date | null;
   lastUpdated: Date | null;
+  lastPopulated: Date | null;
   taskId: string;
   repeats: boolean | null;
   frequency: string | null;
@@ -94,6 +95,7 @@ async function compileLists(userId: string) {
             description: task.description,
             createdOn: task.createdOn,
             lastUpdated: task.lastUpdated,
+            lastPopulated: task.lastPopulated,
             taskId: task.taskId,
             repeats: task.repeats,
             frequency: task.frequency,
@@ -112,6 +114,7 @@ async function compileLists(userId: string) {
           );
           const todayNumber = Math.floor(Date.now() / DAY_IN_MILLISECONDS);
           if (dayNumber === todayNumber) {
+            console.log(dayNumber, " ", todayNumber);
             return newTask;
           }
           const [activeString, inactiveString] = task.frequency.split(":");
@@ -137,23 +140,25 @@ async function compileLists(userId: string) {
             };
           });
           // TODO: figure out drizzle/ typescript issue
-          const newTaskInstances = await db
-            .insert(taskInstancesTable)
-            .values(entries as any)
-            .returning();
-          // const newTasksInstances = Promise.all(
-          //   neededEntries.map(async (entry) => {
-          //     const timeStamp = entry * DAY_IN_MILLISECONDS;
-          //     return await db.insert(taskInstancesTable).values({
-          //       userId: task.userId,
-          //       taskId: task.taskId,
-          //       listId: task.listId,
-          //       createdOn: timeStamp,
-          //       lastUpdated: timeStamp,
-          //     });
-          //   })
-          // );
+          let newTaskInstances: {
+            userId: string;
+            listId: string;
+            createdOn: Date | null;
+            lastUpdated: Date | null;
+            taskId: string;
+            instanceId: string;
+            completed: boolean | null;
+          }[] = [];
 
+          if (entries.length !== 0) {
+            newTaskInstances = await db
+              .insert(taskInstancesTable)
+              .values(entries as any)
+              .returning();
+          }
+          newTask.instances = [...newTask.instances, ...newTaskInstances];
+          newTask.lastPopulated = new Date();
+          // see if back propagation is functional, otherwise add console logs
           return newTask;
         })
       );
@@ -177,6 +182,8 @@ function getNeededEntries(
   inactive: number,
   today: number
 ) {
+  console.log("Entered function");
+
   let min = Number.MAX_SAFE_INTEGER;
   let max = 0;
   const previousFrequencies = new Set();
@@ -194,13 +201,13 @@ function getNeededEntries(
   let right = min + active + inactive;
   while (right <= max) {
     let valid = true;
-    for (let i = left; i < inactive + left; i++) {
-      if (previousFrequencies.has(i)) {
+    for (let i = left; i < active + left; i++) {
+      if (!previousFrequencies.has(i)) {
         valid = false;
       }
     }
-    for (let i = inactive + left; i <= right; i++) {
-      if (!previousFrequencies.has(i)) {
+    for (let i = active + left; i <= right; i++) {
+      if (previousFrequencies.has(i)) {
         valid = false;
       }
     }
@@ -214,16 +221,16 @@ function getNeededEntries(
   const newEntries = [];
   let inactiveDays = 0;
   let activeDays = 0;
-  for (let i = right + 1; i <= today; i++) {
-    inactiveDays++;
-    if (inactiveDays !== inactive) {
+  for (let i = lastCompletedFrequency + 1; i <= today; i++) {
+    activeDays++;
+    if (activeDays !== active) {
       continue;
     }
-    activeDays++;
-    if (!previousFrequencies.has(i)) {
+    inactiveDays++;
+    if (previousFrequencies.has(i)) {
       newEntries.push(i);
     }
-    if (activeDays >= active) {
+    if (inactiveDays >= inactive) {
       inactiveDays = 0;
       activeDays = 0;
     }
