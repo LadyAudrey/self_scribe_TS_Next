@@ -108,6 +108,9 @@ async function compileLists(userId: string) {
             .orderBy(desc(taskInstancesTable.createdOn))
             .limit(31);
           newTask.instances = taskInstances;
+          if (!task.repeats) {
+            return newTask;
+          }
           const lastPopulated = task.lastPopulated!;
           const dayNumber = Math.floor(
             lastPopulated.getTime() / DAY_IN_MILLISECONDS
@@ -129,8 +132,9 @@ async function compileLists(userId: string) {
             inactive,
             todayNumber
           );
+          console.log(neededEntries, " neededEntries");
           const entries = neededEntries.map((entry) => {
-            const timeStamp = entry * DAY_IN_MILLISECONDS;
+            const timeStamp = new Date(entry * DAY_IN_MILLISECONDS);
             return {
               userId: task.userId,
               taskId: task.taskId,
@@ -153,12 +157,15 @@ async function compileLists(userId: string) {
           if (entries.length !== 0) {
             newTaskInstances = await db
               .insert(taskInstancesTable)
-              .values(entries as any)
+              .values(entries)
               .returning();
+            await db
+              .update(tasksTable)
+              .set({ lastPopulated: new Date() })
+              .where(eq(tasksTable.taskId, task.taskId));
           }
           newTask.instances = [...newTask.instances, ...newTaskInstances];
           newTask.lastPopulated = new Date();
-          // see if back propagation is functional, otherwise add console logs
           return newTask;
         })
       );
@@ -188,6 +195,7 @@ function getNeededEntries(
   let max = 0;
   const previousFrequencies = new Set();
   taskInstances.forEach((instance) => {
+    console.log("createdOn is ", instance.createdOn);
     const dayNumber = Math.floor(
       instance.createdOn!.getTime() / DAY_IN_MILLISECONDS
     );
@@ -196,9 +204,10 @@ function getNeededEntries(
     previousFrequencies.add(dayNumber);
   });
   // create variable to store the day of the last completed frequency
-  let lastCompletedFrequency = 0;
+  let lastCompletedFrequency = min;
   let left = min;
   let right = min + active + inactive;
+  // should max be today?
   while (right <= max) {
     let valid = true;
     for (let i = left; i < active + left; i++) {
@@ -222,15 +231,15 @@ function getNeededEntries(
   let inactiveDays = 0;
   let activeDays = 0;
   for (let i = lastCompletedFrequency + 1; i <= today; i++) {
-    activeDays++;
-    if (activeDays !== active) {
+    inactiveDays++;
+    if (inactiveDays <= inactive) {
       continue;
     }
-    inactiveDays++;
-    if (previousFrequencies.has(i)) {
+    if (!previousFrequencies.has(i)) {
       newEntries.push(i);
     }
-    if (inactiveDays >= inactive) {
+    activeDays++;
+    if (activeDays >= active) {
       inactiveDays = 0;
       activeDays = 0;
     }
