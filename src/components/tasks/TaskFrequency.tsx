@@ -71,7 +71,6 @@ export function TaskFrequency({
             return;
           }
           setHasChanged(true);
-          3;
           setInactiveDays(parseInt(event.target.value));
         }}
       />

@@ -3,7 +3,6 @@
 import * as React from "react";
 import * as AccordionPrimitive from "@radix-ui/react-accordion";
 import ChevronDown from "../../../public/buttons/nav_arrow_down.svg";
-import { cn } from "../utils";
 import Image from "next/image";
 
 const Accordion = AccordionPrimitive.Root;

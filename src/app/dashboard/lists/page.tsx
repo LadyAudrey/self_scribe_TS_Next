@@ -5,7 +5,6 @@ import { auth } from "@/auth";
 import { listsTable, taskInstancesTable, tasksTable } from "@/db/schema";
 import { db } from "@/db";
 import { eq, desc } from "drizzle-orm";
-import { AddTask } from "@/components/tasks/AddTask";
 import { CompletedPane } from "@/components/lists/CompletedPane";
 
 export type Lists = List[];
