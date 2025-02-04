@@ -1,0 +1,1 @@
+ALTER TABLE "tasks" ALTER COLUMN "frequency" SET NOT NULL;
