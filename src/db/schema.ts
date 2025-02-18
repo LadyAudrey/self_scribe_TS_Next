@@ -1,3 +1,4 @@
+import { sql } from "drizzle-orm";
 import {
   boolean,
   integer,
@@ -135,4 +136,20 @@ export const taskInstancesTable = pgTable("taskInstances", {
   createdOn: timestamp({ mode: "date" }).defaultNow(),
   lastUpdated: timestamp({ mode: "date" }).defaultNow(),
   completed: boolean().default(false),
+});
+
+export const symptomsTable = pgTable("symptoms", {
+  symptomId: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  name: text().notNull(),
+  userId: text("userId")
+    .notNull()
+    .references(() => usersTable.id, { onDelete: "cascade" }),
+  description: text(),
+  createdOn: timestamp({ mode: "date" }).defaultNow(),
+  lastUpdated: timestamp({ mode: "date" }).defaultNow(),
+  categories: text("categories")
+    .array()
+    .default(sql`'{}'::text[]`),
 });
