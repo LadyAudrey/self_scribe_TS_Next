@@ -125,10 +125,10 @@ export const taskInstancesTable = pgTable("taskInstances", {
     .$defaultFn(() => crypto.randomUUID()),
   userId: text("userId")
     .notNull()
-    .references(() => tasksTable.userId, { onDelete: "cascade" }),
+    .references(() => usersTable.id, { onDelete: "cascade" }),
   listId: text("listId")
     .notNull()
-    .references(() => tasksTable.listId, { onDelete: "cascade" }),
+    .references(() => listsTable.listId, { onDelete: "cascade" }),
   taskId: text("taskId")
     .notNull()
     .references(() => tasksTable.taskId, { onDelete: "cascade" }),
