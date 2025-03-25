@@ -2,8 +2,8 @@ import { taskInstancesTable, tasksTable } from "@/db/schema";
 import { db } from "@/db";
 import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
-import { EditTask } from "./EditTask";
-import { DeleteBtn } from "../lists/DeleteBtn";
+import { EditItem } from "@/components/UI/EditItem";
+import { DeleteBtn } from "../UI/DeleteBtn";
 import {
   Accordion,
   AccordionContent,
@@ -84,7 +84,7 @@ export function Task({ task }: TaskProps) {
         <AccordionItem value={task.taskId}>
           <AccordionTrigger className="flex grow justify-between items-center gap-2">
             <Checkbox checked={completed} onChange={completeTask} />
-            <EditTask name={task.name} updateTask={updateTask} />
+            <EditItem name={task.name} updateItem={updateTask} />
             <DeleteBtn
               deleteFn={deleteTask}
               confirmationTxt="Are you sure you want to delete this task?"

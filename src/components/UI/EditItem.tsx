@@ -1,12 +1,13 @@
 "use client";
 import { useState } from "react";
 
-type EditListProps = {
+type EditItemProps = {
   name: string;
-  updateList: (title: string) => void;
+  updateItem: (title: string) => void;
+  className?: string;
 };
 
-export default function EditList({ name, updateList }: EditListProps) {
+export function EditItem({ name, updateItem, className }: EditItemProps) {
   const [editing, setEditing] = useState(false);
   const [title, setTitle] = useState(name);
   function onDblClick() {
@@ -14,7 +15,7 @@ export default function EditList({ name, updateList }: EditListProps) {
   }
   function onBlur() {
     if (title !== name) {
-      updateList(title);
+      updateItem(title);
     }
     setEditing(false);
   }
@@ -24,13 +25,18 @@ export default function EditList({ name, updateList }: EditListProps) {
       return;
     }
     if (title !== name) {
-      updateList(title);
+      updateItem(title);
     }
     setEditing(false);
   }
 
   return (
-    <div onDoubleClick={onDblClick} onBlur={onBlur} onKeyDown={onEnterKey}>
+    <div
+      onDoubleClick={onDblClick}
+      onBlur={onBlur}
+      onKeyDown={onEnterKey}
+      className={className}
+    >
       {editing && (
         <input
           className="text-black"

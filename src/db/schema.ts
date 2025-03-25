@@ -1,9 +1,11 @@
 import { sql } from "drizzle-orm";
+import { int } from "drizzle-orm/mysql-core";
 import {
   boolean,
   integer,
   pgTable,
   primaryKey,
+  smallint,
   text,
   timestamp,
 } from "drizzle-orm/pg-core";
@@ -152,4 +154,19 @@ export const symptomsTable = pgTable("symptoms", {
   categories: text("categories")
     .array()
     .default(sql`'{}'::text[]`),
+});
+
+export const symptomInstancesTable = pgTable("symptomInstances", {
+  instanceId: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID())
+    .notNull(),
+  userId: text("userId")
+    .notNull()
+    .references(() => usersTable.id, { onDelete: "cascade" }),
+  symptomId: text("symptomId")
+    .notNull()
+    .references(() => symptomsTable.symptomId, { onDelete: "cascade" }),
+  createdOn: timestamp({ mode: "date" }).defaultNow().notNull(),
+  severity: smallint().notNull().default(0),
 });

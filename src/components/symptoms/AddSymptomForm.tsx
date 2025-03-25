@@ -1,46 +1,55 @@
 "use client";
 
-import { useState } from "react";
-import { SYMPTOM_CATEGORIES } from "@/app/dashboard/symptoms/page";
+import { useActionState, useState } from "react";
+import { SYMPTOM_CATEGORIES } from "@/app/dashboard/symptoms/symptomsCategories";
+import { useFormStatus } from "react-dom";
 
-export default function AddSymptomForm() {
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
-  const [category, setCategory] = useState("");
+type AddSymptomFormProps = {
+  addSymptom: (
+    prevState: {
+      message: string;
+    },
+    formData: FormData
+  ) => Promise<{
+    message: string;
+  }>;
+};
 
-  function onSubmit() {}
+export default function AddSymptomForm({ addSymptom }: AddSymptomFormProps) {
+  const [state, formAction] = useActionState(addSymptom, { message: "" });
+
   return (
-    <form onSubmit={onSubmit}>
+    <form action={formAction} className="text-black">
       <label htmlFor="name">Name</label>
-      <input
-        type="text"
-        name="name"
-        value={name}
-        onChange={(event) => {
-          setName(event.target.value);
-        }}
-      />
+      <input type="text" name="name" />
       <label htmlFor="description">Description</label>
-      <input
-        type="textarea"
-        name="description"
-        value={description}
-        onChange={(event) => {
-          setDescription(event.target.value);
-        }}
-      />
-      <select
-        value={category}
-        onChange={(event) => {
-          setCategory(event.target.value);
-        }}
-      >
+      <input type="textarea" name="description" />
+      <select>
         <option value="">None</option>
         {SYMPTOM_CATEGORIES.map((category) => {
-          return <option value={category}>{category}</option>;
+          return (
+            <option value={category} key={category}>
+              {category}
+            </option>
+          );
         })}
       </select>
-      <button type="submit">Submit</button>
+      <SubmitButton />
+      {state.message !== "" && <p>{state.message}</p>}
     </form>
+  );
+}
+
+function SubmitButton() {
+  const { pending } = useFormStatus();
+  return (
+    <button
+      type="submit"
+      aria-disabled={pending}
+      disabled={pending}
+      className="text-white"
+    >
+      Add Symptom
+    </button>
   );
 }

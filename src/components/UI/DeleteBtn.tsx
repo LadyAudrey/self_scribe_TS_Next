@@ -6,12 +6,14 @@ type DeleteBtnProps = {
   deleteFn: () => void;
   confirmationTxt: string;
   modalTitle: string;
+  className?: string;
 };
 
 export function DeleteBtn({
   deleteFn,
   confirmationTxt,
   modalTitle,
+  className,
 }: DeleteBtnProps) {
   const [modalOpen, setModalOpen] = useState(false);
   return (
@@ -20,7 +22,7 @@ export function DeleteBtn({
         onClick={() => {
           setModalOpen(true);
         }}
-        className="bg-exit-btn bg-cover w-5 h-5"
+        className={`bg-exit-btn bg-cover w-5 h-5 ${className ? className : ""}`}
       />
       <ConfirmationModal
         onConfirm={deleteFn}
