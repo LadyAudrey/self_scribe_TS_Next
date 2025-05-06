@@ -15,6 +15,20 @@
       "when": 1740446164350,
       "tag": "0001_worthless_wasp",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1743466485776,
+      "tag": "0002_jittery_wind_dancer",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1745886229243,
+      "tag": "0003_friendly_rictor",
+      "breakpoints": true
     }
   ]
 }

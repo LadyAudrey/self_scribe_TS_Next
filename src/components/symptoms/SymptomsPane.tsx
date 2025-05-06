@@ -2,7 +2,7 @@ import { revalidatePath } from "next/cache";
 import { db } from "@/db";
 import { eq } from "drizzle-orm";
 
-import { symptomsTable } from "@/db/schema";
+import { symptomInstancesTable, symptomsTable } from "@/db/schema";
 import Side from "../UI/Side";
 import { DeleteBtn } from "../UI/DeleteBtn";
 import { Checkbox } from "@headlessui/react";
@@ -16,6 +16,8 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "../UI/Accordion";
+import { Textarea } from "../UI/Textarea";
+import SymptomDescription from "./SymptomDescription";
 
 type SymptomsPaneProps = {
   symptoms: (typeof symptomsTable.$inferSelect)[];
@@ -40,33 +42,44 @@ export async function SymptomsPane({ symptoms }: SymptomsPaneProps) {
                 .update(symptomsTable)
                 .set({ name: title })
                 .where(eq(symptomsTable.symptomId, symptom.symptomId));
-              revalidatePath("/dashboard/lists");
+              revalidatePath("/dashboard/symptoms");
             }
-            // TODO: generate and migrate, hook up select to db
+            async function addSymptomInstance() {
+              "use server";
+              await db.insert(symptomInstancesTable).values({
+                symptomId: symptom.symptomId,
+                userId: symptom.userId,
+                severity: 0,
+              });
+              revalidatePath("/dashboard/symptoms");
+            }
+            async function updateSymptomDescription(description: string) {
+              "use server";
+              await db
+                .update(symptomsTable)
+                .set({
+                  description: description,
+                })
+                .where(eq(symptomsTable.symptomId, symptom.symptomId));
+              revalidatePath("/dashboard/symptoms");
+            }
             return (
               <li key={symptom.symptomId}>
                 <Accordion type={"single"} collapsible>
                   <AccordionItem value={symptom.symptomId}>
                     <AccordionTrigger className="flex grow justify-between items-center gap-2">
+                      <button
+                        onClick={addSymptomInstance}
+                        className="text-white"
+                      >
+                        Add
+                      </button>
                       <EditItem
                         name={symptom.name}
                         updateItem={updateSymptom}
                         className="grow"
                       />
-                      <label htmlFor="severity-select">Severity:</label>
-                      <select id="severity-select" className="text-black">
-                        <option value="0">0</option>
-                        <option value="1">1</option>
-                        <option value="2">2</option>
-                        <option value="3">3</option>
-                        <option value="4">4</option>
-                        <option value="5">5</option>
-                        <option value="6">6</option>
-                        <option value="7">7</option>
-                        <option value="8">8</option>
-                        <option value="9">9</option>
-                        <option value="10">10</option>
-                      </select>
+
                       <DeleteBtn
                         deleteFn={deleteSymptom}
                         confirmationTxt="Are you sure you want to delete this symptom? All of your instances will be permanently removed. This action cannot be undone."
@@ -75,8 +88,12 @@ export async function SymptomsPane({ symptoms }: SymptomsPaneProps) {
                       />
                     </AccordionTrigger>
                     <AccordionContent className="flex justify-between text-black">
-                      {/* categories - multisect*/}
+                      {/* TODO: categories - combo-box (action-rendering =>) from shad cn (https://ui.shadcn.com/docs/components/combobox)*/}
                       {/* description - text */}
+                      <SymptomDescription
+                        description={symptom.description ?? ""}
+                        updateDescription={updateSymptomDescription}
+                      />
                     </AccordionContent>
                   </AccordionItem>
                 </Accordion>

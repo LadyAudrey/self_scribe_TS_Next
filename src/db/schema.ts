@@ -19,6 +19,10 @@ export const usersTable = pgTable("user", {
   email: text("email").unique(),
   emailVerified: timestamp("emailVerified", { mode: "date" }),
   image: text("image"),
+  categories: text("categories")
+    .array()
+    .default(sql`'{}'::text[]`)
+    .notNull(),
 });
 
 export const accountsTable = pgTable(
@@ -153,7 +157,8 @@ export const symptomsTable = pgTable("symptoms", {
   lastUpdated: timestamp({ mode: "date" }).defaultNow(),
   categories: text("categories")
     .array()
-    .default(sql`'{}'::text[]`),
+    .default(sql`'{}'::text[]`)
+    .notNull(),
 });
 
 export const symptomInstancesTable = pgTable("symptomInstances", {

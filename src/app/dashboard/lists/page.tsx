@@ -87,6 +87,7 @@ async function compileLists(userId: string) {
         .orderBy(tasksTable.createdOn);
       const newTasks = await Promise.all(
         tasks.map(async (task) => {
+          // TODO condense and refactor - type definition
           const newTask: Task = {
             name: task.name,
             userId: task.userId,

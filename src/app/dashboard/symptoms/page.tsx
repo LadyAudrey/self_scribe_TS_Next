@@ -1,9 +1,9 @@
 import { auth } from "@/auth";
 import { db } from "@/db";
-import { eq, desc } from "drizzle-orm";
+import { eq, desc, sql, and } from "drizzle-orm";
 
 import Side from "@/components/UI/Side";
-import { symptomsTable } from "@/db/schema";
+import { symptomInstancesTable, symptomsTable } from "@/db/schema";
 import {
   Accordion,
   AccordionContent,
@@ -15,6 +15,7 @@ import AddSymptomForm from "@/components/symptoms/AddSymptomForm";
 import { revalidatePath } from "next/cache";
 import { Description } from "@headlessui/react";
 import { SymptomsPane } from "@/components/symptoms/SymptomsPane";
+import { date } from "drizzle-orm/pg-core";
 // import { SymptomsPane } from "@/components/symptoms/SymptomsPane";
 
 export default async function page() {
@@ -65,6 +66,28 @@ export default async function page() {
         <Side>
           <div className="flex flex-col">
             <div className="text-2xl">Today&apos;s Symptoms</div>
+            {/* TODO: create UI on right to display symptomInstances */}
+            {symptomLists.map((symptom) => {
+              if (symptom.instances.length == 0) {
+                return null;
+              }
+              return (
+                <div>
+                  <h3>{symptom.name}</h3>
+                  <ul>
+                    {symptom.instances.map((instance) => {
+                      return (
+                        <li className="text-white flex gap-10">
+                          {/* TODO: install select */}
+                          <p>{instance.severity}</p>
+                          <p>{instance.createdOn.toISOString()}</p>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </div>
+              );
+            })}
           </div>
         </Side>
       </div>
@@ -78,5 +101,25 @@ async function compileSymptoms(userId: string) {
     .from(symptomsTable)
     .where(eq(symptomsTable.userId, userId))
     .orderBy(symptomsTable.createdOn);
-  return symptomLists;
+  const symptomsWithInstances = await Promise.all(
+    symptomLists.map(async (symptom) => {
+      const instances = await db
+        .select({
+          severity: symptomInstancesTable.severity,
+          createdOn: symptomInstancesTable.createdOn,
+        })
+        .from(symptomInstancesTable)
+        .where(
+          and(
+            eq(
+              sql`DATE(${symptomInstancesTable.createdOn})`,
+              sql`CURRENT_DATE`
+            ),
+            eq(symptomInstancesTable.symptomId, symptom.symptomId)
+          )
+        );
+      return { ...symptom, instances };
+    })
+  );
+  return symptomsWithInstances;
 }
