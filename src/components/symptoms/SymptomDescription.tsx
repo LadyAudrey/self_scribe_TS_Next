@@ -25,6 +25,7 @@ export default function SymptomDescription({
           onClick={() => {
             updateDescription(text);
           }}
+          className="text-white"
         >
           Save
         </button>

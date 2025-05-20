@@ -23,6 +23,7 @@ export default async function page() {
   if (!session || !session.user) {
     return null;
   }
+  console.log(session.user);
   const userId = session.user.id!;
   const symptomLists = await compileSymptoms(userId);
 

@@ -18,6 +18,7 @@ import {
 } from "../UI/Accordion";
 import { Textarea } from "../UI/Textarea";
 import SymptomDescription from "./SymptomDescription";
+import { SymptomCategories } from "./SymptomCategories";
 
 type SymptomsPaneProps = {
   symptoms: (typeof symptomsTable.$inferSelect)[];
@@ -87,9 +88,9 @@ export async function SymptomsPane({ symptoms }: SymptomsPaneProps) {
                         className="ms-5"
                       />
                     </AccordionTrigger>
-                    <AccordionContent className="flex justify-between text-black">
+                    <AccordionContent className="flex flex-col gap-2 justify-between text-black">
                       {/* TODO: categories - combo-box (action-rendering =>) from shad cn (https://ui.shadcn.com/docs/components/combobox)*/}
-                      {/* description - text */}
+                      <SymptomCategories categories={[]} />
                       <SymptomDescription
                         description={symptom.description ?? ""}
                         updateDescription={updateSymptomDescription}
