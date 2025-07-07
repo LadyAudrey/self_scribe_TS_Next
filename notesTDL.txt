@@ -1,0 +1,25 @@
+Dashboard
+
+Tasks
+- make completed rendering conditional
+- add intensity scale?
+- UI refining
+
+Symptoms
+- add intensity scale
+- create updating description txt
+- add editable notes for symptom instances
+- UI refining
+- - fix add category button width
+
+- Today's Symptoms
+- view intensity and notes
+
+Graphs
+- create page with 2 sides
+- Display tasks and symptoms on left side
+- - drop down for instances++
+- ability to add symptoms and tasks to lines
+- graph to show data
+
+Profile

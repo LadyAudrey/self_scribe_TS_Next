@@ -22,8 +22,14 @@ import { SymptomCategories } from "./SymptomCategories";
 
 type SymptomsPaneProps = {
   symptoms: (typeof symptomsTable.$inferSelect)[];
+  categories: string[];
 };
-export async function SymptomsPane({ symptoms }: SymptomsPaneProps) {
+
+//TODO fix symptoms component nesting
+export async function SymptomsPane({
+  symptoms,
+  categories,
+}: SymptomsPaneProps) {
   return (
     <Side>
       <div className="flex flex-col">
@@ -90,7 +96,10 @@ export async function SymptomsPane({ symptoms }: SymptomsPaneProps) {
                     </AccordionTrigger>
                     <AccordionContent className="flex flex-col gap-2 justify-between text-black">
                       {/* TODO: categories - combo-box (action-rendering =>) from shad cn (https://ui.shadcn.com/docs/components/combobox)*/}
-                      <SymptomCategories categories={[]} />
+                      <SymptomCategories
+                        symptomCategories={symptom.categories}
+                        allCategories={categories}
+                      />
                       <SymptomDescription
                         description={symptom.description ?? ""}
                         updateDescription={updateSymptomDescription}

@@ -18,32 +18,20 @@ import {
   PopoverTrigger,
 } from "@/components/UI/Popover";
 
-const frameworks = [
-  {
-    value: "next.js",
-    label: "Next.js",
-  },
-  {
-    value: "sveltekit",
-    label: "SvelteKit",
-  },
-  {
-    value: "nuxt.js",
-    label: "Nuxt.js",
-  },
-  {
-    value: "remix",
-    label: "Remix",
-  },
-  {
-    value: "astro",
-    label: "Astro",
-  },
-];
-
-export function ComboboxDemo() {
+type CategoryComboboxProps = {
+  allCategories: string[];
+  symptomCategories: string[];
+};
+export function CategoryCombobox({
+  allCategories,
+  symptomCategories,
+}: CategoryComboboxProps) {
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState("");
+
+  const symptomCategoriesSet = new Set(symptomCategories);
+  const allCategoriesSet = new Set(allCategories);
+  const categories = allCategoriesSet.difference(symptomCategoriesSet);
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -53,29 +41,26 @@ export function ComboboxDemo() {
           aria-expanded={open}
           className="w-[200px] justify-between"
         >
-          {value
-            ? frameworks.find((framework) => framework.value === value)?.label
-            : "Select framework..."}
-            {/* need an SVG for a visual */}
-          {/* <ChevronsUpDown className="opacity-50" /> */}
+          +{/* need an SVG for a visual */}
         </button>
       </PopoverTrigger>
-      <PopoverContent className="w-[200px] p-0">
+      <PopoverContent className="bg-black w-[200px] p-0">
         <Command>
-          <CommandInput placeholder="Search framework..." className="h-9" />
+          <CommandInput placeholder="Search categories..." className="h-9" />
           <CommandList>
-            <CommandEmpty>No framework found.</CommandEmpty>
+            {/* TODO: create logic to create new categories from input */}
+            <CommandEmpty>No category found.</CommandEmpty>
             <CommandGroup>
-              {frameworks.map((framework) => (
+              {Array.from(categories).map((category) => (
                 <CommandItem
-                  key={framework.value}
-                  value={framework.value}
+                  key={category}
+                  value={category}
                   onSelect={(currentValue) => {
                     setValue(currentValue === value ? "" : currentValue);
                     setOpen(false);
                   }}
                 >
-                  {framework.label}
+                  {category}
                   {/* use svg checkmark if applicable */}
                   {/* <Check
                     className={cn(

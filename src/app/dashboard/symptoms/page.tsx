@@ -3,7 +3,7 @@ import { db } from "@/db";
 import { eq, desc, sql, and } from "drizzle-orm";
 
 import Side from "@/components/UI/Side";
-import { symptomInstancesTable, symptomsTable } from "@/db/schema";
+import { symptomInstancesTable, symptomsTable, usersTable } from "@/db/schema";
 import {
   Accordion,
   AccordionContent,
@@ -26,6 +26,7 @@ export default async function page() {
   console.log(session.user);
   const userId = session.user.id!;
   const symptomLists = await compileSymptoms(userId);
+  const categories = await getUserCategories(userId);
 
   async function addSymptom(
     _prevState: { message: string },
@@ -63,7 +64,7 @@ export default async function page() {
         </Accordion>
       </div>
       <div className="flex flex-col md:flex-row justify-around min-h-full gap-4">
-        <SymptomsPane symptoms={symptomLists} />
+        <SymptomsPane symptoms={symptomLists} categories={categories} />
         <Side>
           <div className="flex flex-col">
             <div className="text-2xl">Today&apos;s Symptoms</div>
@@ -75,7 +76,7 @@ export default async function page() {
               return (
                 <div>
                   <h3>{symptom.name}</h3>
-                  <ul>
+                  <ul key={symptom.symptomId}>
                     {symptom.instances.map((instance) => {
                       return (
                         <li className="text-white flex gap-10">
@@ -96,6 +97,7 @@ export default async function page() {
   );
 }
 
+// TODO: wrap in a use-call/cache back to reduce how often it's called
 async function compileSymptoms(userId: string) {
   const symptomLists = await db
     .select()
@@ -123,4 +125,17 @@ async function compileSymptoms(userId: string) {
     })
   );
   return symptomsWithInstances;
+}
+
+async function getUserCategories(userId: string) {
+  const result = await db
+    .select({
+      categories: usersTable.categories,
+    })
+    .from(usersTable)
+    .where(eq(usersTable.id, userId));
+  if (result.length < 1) {
+    return [];
+  }
+  return result[0].categories;
 }

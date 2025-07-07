@@ -1,22 +1,37 @@
 import { DeleteBtn } from "../UI/DeleteBtn";
+import { CategoryCombobox } from "./CategoryCombobox";
 
 type SymptomCategoriesProps = {
-  categories: string[];
+  symptomCategories: string[];
+  allCategories: string[];
 };
 
-export function SymptomCategories({ categories }: SymptomCategoriesProps) {
+export function SymptomCategories({
+  symptomCategories,
+  allCategories,
+}: SymptomCategoriesProps) {
   return (
     <div className="flex flex-wrap gap-2">
-      {categories.map((category) => {
+      {symptomCategories.map((category) => {
         async function deleteCategory() {
           "use server";
           console.log("deleting cateogry");
         }
-        return <Category category={category} deleteFn={deleteCategory} />;
+        return (
+          <Category
+            category={category}
+            deleteFn={deleteCategory}
+            key={category}
+          />
+        );
       })}
-      {/* TODO: combo box should appear when + is clicked */}
+      {/* TODO: create logic to update categorie array with new input*/}
+      {/* fetch user id from auth obj */}
       <div className="flex items-center rounded-xl bg-gray-700 text-white px-1">
-        +
+        <CategoryCombobox
+          allCategories={allCategories}
+          symptomCategories={symptomCategories}
+        />
       </div>
     </div>
   );
