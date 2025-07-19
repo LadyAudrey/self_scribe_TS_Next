@@ -5,9 +5,10 @@ Tasks
 - add intensity scale?
 - UI refining
 - - input boxes, a character of space horizontal spacing
-- - collapsing buttons
+- - -collapsing buttons-
 - list completed checkbox
 - add day/ week/ month/ year drop down option list for repeating cycle
+- Date
 
 Symptoms
 - add intensity scale
@@ -15,9 +16,11 @@ Symptoms
 - add editable notes for symptom instances
 - UI refining
 - - fix add category button width
+- Date
 
 - Today's Symptoms
 - view intensity and notes
+- Date
 
 Graphs
 - create page with 2 sides
