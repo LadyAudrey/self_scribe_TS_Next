@@ -117,7 +117,6 @@ async function compileLists(userId: string) {
           );
           const todayNumber = Math.floor(Date.now() / DAY_IN_MILLISECONDS);
           if (dayNumber === todayNumber) {
-            console.log(dayNumber, " ", todayNumber);
             return newTask;
           }
           const [activeString, inactiveString] = task.frequency.split(":");
@@ -132,7 +131,6 @@ async function compileLists(userId: string) {
             inactive,
             todayNumber
           );
-          console.log(neededEntries, " neededEntries");
           const entries = neededEntries.map((entry) => {
             const timeStamp = new Date(entry * DAY_IN_MILLISECONDS);
             return {
@@ -189,7 +187,7 @@ function getNeededEntries(
   inactive: number,
   today: number
 ) {
-  console.log("Entered function");
+  console.log("Entered getNeededEntries function");
 
   let min = Number.MAX_SAFE_INTEGER;
   let max = 0;
@@ -199,9 +197,15 @@ function getNeededEntries(
     const dayNumber = Math.floor(
       instance.createdOn!.getTime() / DAY_IN_MILLISECONDS
     );
+    console.log(Date.now(), "Date.now()");
     min = Math.min(min, dayNumber);
     max = Math.max(max, dayNumber);
     previousFrequencies.add(dayNumber);
+    // TODO: add conditional logic for if a task is completed
+    const wasYesterday = Date.now() / DAY_IN_MILLISECONDS - 1;
+    if (dayNumber > wasYesterday) {
+      console.log("was recently completed");
+    }
   });
   // create variable to store the day of the last completed frequency
   let lastCompletedFrequency = min;

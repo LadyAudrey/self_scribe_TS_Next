@@ -1,7 +1,7 @@
 Dashboard
 
 Tasks
-- make completed rendering conditional
+- **make completed rendering conditional
 - add intensity scale?
 - UI refining
 - - input boxes, a character of space horizontal spacing
@@ -35,3 +35,13 @@ Alpha Testing
 - Graphs
 
 Profile
+- name
+
+Lannding page
+- explanation txt
+
+About Self Scribe page
+- dev process
+- - timeline
+- - tools
+- goals
