@@ -73,7 +73,7 @@ export default async function page() {
 }
 
 // TODO: wrap in a use-call/cache back to reduce how often it's called
-async function compileSymptoms(userId: string) {
+export async function compileSymptoms(userId: string) {
   const symptomLists = await db
     .select()
     .from(symptomsTable)
@@ -102,7 +102,7 @@ async function compileSymptoms(userId: string) {
   return symptomsWithInstances;
 }
 
-async function getUserCategories(userId: string) {
+export async function getUserCategories(userId: string) {
   const result = await db
     .select({
       categories: usersTable.categories,

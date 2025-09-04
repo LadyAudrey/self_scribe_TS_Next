@@ -22,17 +22,19 @@ Symptoms
 - **straighten out component structure**
 - correct how symptom.instances are being accessed
 - update symptom instance abilities
-- **readable date in Today's Symptoms**
 -- description
 -- date
 -- intensity
+- **readable date in Today's Symptoms**
 
 Graphs
-- create page with 2 sides
+- **create page with 2 sides**
 - Display tasks and symptoms on left side
 - - drop down for instances++
 - ability to add symptoms and tasks to lines
 - graph to show data
+- **decide how to access data from**
+- **create imports and save data to variables**
 
 Alpha Testing
 - Tasks

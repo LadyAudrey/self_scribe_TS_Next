@@ -72,7 +72,8 @@ export default async function page() {
   );
 }
 
-async function compileLists(userId: string) {
+// I added th export here
+export async function compileLists(userId: string) {
   const toDoLists = await db
     .select()
     .from(listsTable)
