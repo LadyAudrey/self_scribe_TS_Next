@@ -12,15 +12,20 @@ Tasks
 
 Symptoms
 - add intensity scale
-- create updating description txt
+- **create updating description txt**
 - add editable notes for symptom instances
 - UI refining
 - - fix add category button width
-- Date
 
 - Today's Symptoms
 - view intensity and notes
-- Date
+- **straighten out component structure**
+- correct how symptom.instances are being accessed
+- update symptom instance abilities
+- **readable date in Today's Symptoms**
+-- description
+-- date
+-- intensity
 
 Graphs
 - create page with 2 sides

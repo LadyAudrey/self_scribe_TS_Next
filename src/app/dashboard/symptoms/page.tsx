@@ -15,6 +15,7 @@ import AddSymptomForm from "@/components/symptoms/AddSymptomForm";
 import { revalidatePath } from "next/cache";
 import { Description } from "@headlessui/react";
 import { SymptomsPane } from "@/components/symptoms/SymptomsPane";
+import { TodaysSymptomsPane } from "@/components/symptoms/TodaysSymptomsPane";
 import { date } from "drizzle-orm/pg-core";
 // import { SymptomsPane } from "@/components/symptoms/SymptomsPane";
 
@@ -65,33 +66,7 @@ export default async function page() {
       </div>
       <div className="flex flex-col md:flex-row justify-around min-h-full gap-4">
         <SymptomsPane symptoms={symptomLists} categories={categories} />
-        <Side>
-          <div className="flex flex-col">
-            <div className="text-2xl">Today&apos;s Symptoms</div>
-            {/* TODO: create UI on right to display symptomInstances */}
-            {symptomLists.map((symptom) => {
-              if (symptom.instances.length == 0) {
-                return null;
-              }
-              return (
-                <div>
-                  <h3>{symptom.name}</h3>
-                  <ul key={symptom.symptomId}>
-                    {symptom.instances.map((instance) => {
-                      return (
-                        <li className="text-white flex gap-10">
-                          {/* TODO: install select */}
-                          <p>{instance.severity}</p>
-                          <p>{instance.createdOn.toISOString()}</p>
-                        </li>
-                      );
-                    })}
-                  </ul>
-                </div>
-              );
-            })}
-          </div>
-        </Side>
+        <TodaysSymptomsPane symptoms={symptomLists} categories={categories} />
       </div>
     </div>
   );
